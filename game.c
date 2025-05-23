@@ -32,7 +32,7 @@ int check_win(GameState* game) {
 
 // 指定列の一番上のカードのインデックスを返す（なければ-1）
 int top_card_index(GameState* game, int col) {
-    for (int i = 12; i >= 0; --i) {
+    for (int i = 25; i >= 0; --i) { // 12→25
         if (game->tableau[col][i].value != 0) return i;
     }
     return -1;

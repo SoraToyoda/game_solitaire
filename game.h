@@ -3,10 +3,10 @@
 #include "deck.h"
 
 typedef struct {
-    Card tableau[7][13]; // 最大13枚まで
+    Card tableau[7][26];      // 13→26
     Card stock[24];     // 山札（未使用カード）
     int stock_pos;      // 山札の現在位置
-    Card foundation[4][13]; // 組札（4スート分）
+    Card foundation[4][26];   // 13→26
 } GameState;
 
 void init_game(GameState* game, Deck* deck);

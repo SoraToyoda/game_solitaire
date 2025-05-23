@@ -78,7 +78,7 @@ void draw_game(GameState* game) {
         int fx = 20 + f * 10; // 20,30,40,50
         mvprintw(0, fx, "組札%d", f+1);
         int top = -1;
-        for (int i = 12; i >= 0; --i) {
+        for (int i = 25; i >= 0; --i) { // 12→25
             if (game->foundation[f][i].value != 0) { top = i; break; }
         }
         if (top >= 0) {
@@ -95,7 +95,7 @@ void draw_game(GameState* game) {
     // 場札（メイン部分）
     for (int col = 0; col < 7; ++col) {
         int top = -1;
-        for (int i = 12; i >= 0; --i) {
+        for (int i = 25; i >= 0; --i) { // 12→25
             if (game->tableau[col][i].value != 0) { top = i; break; }
         }
         for (int i = 0; i <= top; ++i) {

@@ -3,12 +3,12 @@
 #include "input.h"
 #include "game.h"
 
-static Selection selection = {0, 0, 0, 0};
+static Selection selection = {0, 0, 0, 0}; // 0:未選択, 1:場札選択中, 2:場札確定, 3:組札選択中
 
 static int cursor_col = 0; // 0〜6:場札, 7〜10:組札
 
-#define TABLEAU_COLS 7
-#define FOUNDATION_COLS 4
+#define TABLEAU_COLS 7 // 場札の列数
+#define FOUNDATION_COLS 4 // 組札の列数
 
 // 選択解除要求フラグ
 static int selection_cancel = 0;
@@ -37,7 +37,8 @@ void handle_input(GameState* game) {
                 // 選択中に上矢印で選択枚数を増やす
                 int col = cursor_col;
                 int new_start = selection.start - 1;
-                if (new_start >= 0) {
+                // 0以上かつ26枚以内
+                if (new_start >= 0 && selection.count < 26 && selection.start + selection.count <= 26) {
                     Card *upper = &game->tableau[col][new_start];
                     Card *lower = &game->tableau[col][new_start + 1];
                     if (upper->value == lower->value + 1 &&
@@ -81,7 +82,7 @@ void handle_input(GameState* game) {
                     for (int f = 0; f < 4; ++f) {
                         // 空 or 同じスートで1つ上の値
                         int top = -1;
-                        for (int i = 12; i >= 0; --i) {
+                        for (int i = 25; i >= 0; --i) {
                             if (game->foundation[f][i].value != 0) { top = i; break; }
                         }
                         if ((top == -1 && card->value == 1) ||
@@ -111,7 +112,7 @@ void handle_input(GameState* game) {
                 // 組札: 選択開始（1枚のみ）
                 int f = cursor_col - TABLEAU_COLS;
                 int top = -1;
-                for (int i = 12; i >= 0; --i) {
+                for (int i = 25; i >= 0; --i) { // 12→25
                     if (game->foundation[f][i].value != 0) { top = i; break; }
                 }
                 if (top >= 0) {
@@ -125,13 +126,18 @@ void handle_input(GameState* game) {
                 // 場札: 選択確定
                 int ok = 1;
                 int col = selection.col;
-                for (int i = 0; i < selection.count - 1; ++i) {
-                    Card *upper = &game->tableau[col][selection.start + i];
-                    Card *lower = &game->tableau[col][selection.start + i + 1];
-                    if (!(upper->value == lower->value + 1 &&
-                        ((upper->suit == 'H' || upper->suit == 'D') != (lower->suit == 'H' || lower->suit == 'D')))) {
-                        ok = 0;
-                        break;
+                // 範囲が26枚を超えないように
+                if (selection.start + selection.count > 26) {
+                    ok = 0;
+                } else {
+                    for (int i = 0; i < selection.count - 1; ++i) {
+                        Card *upper = &game->tableau[col][selection.start + i];
+                        Card *lower = &game->tableau[col][selection.start + i + 1];
+                        if (!(upper->value == lower->value + 1 &&
+                            ((upper->suit == 'H' || upper->suit == 'D') != (lower->suit == 'H' || lower->suit == 'D')))) {
+                            ok = 0;
+                            break;
+                        }
                     }
                 }
                 if (ok && selection.count > 0) {
@@ -187,11 +193,13 @@ void handle_input(GameState* game) {
             if (card->value != 0) {
                 int col = cursor_col;
                 int idx = top_card_index(game, col);
-                Card* to = &game->tableau[col][idx+1];
-                if (can_move_card(card, (idx>=0)?&game->tableau[col][idx]:&(Card){0})) {
-                    *to = *card;
-                    card->value = 0;
-                    card->suit = 0;
+                if (idx + 1 < 26) {
+                    Card* to = &game->tableau[col][idx+1];
+                    if (can_move_card(card, (idx>=0)?&game->tableau[col][idx]:&(Card){0})) {
+                        *to = *card;
+                        card->value = 0;
+                        card->suit = 0;
+                    }
                 }
             }
             break;
@@ -202,7 +210,7 @@ void handle_input(GameState* game) {
             if (card->value != 0) {
                 for (int f = 0; f < 4; ++f) {
                     int top = -1;
-                    for (int i = 12; i >= 0; --i) {
+                    for (int i = 25; i >= 0; --i) {
                         if (game->foundation[f][i].value != 0) { top = i; break; }
                     }
                     if ((top == -1 && card->value == 1) ||
