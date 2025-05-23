@@ -5,11 +5,9 @@
 #include "ui.h"
 #include "input.h"
 
-// プロトタイプ宣言
+
 int get_selection_cancel();
 void clear_selection_cancel();
-
-// プロトタイプ宣言を追加
 int get_cursor_col();
 int get_selected_col();
 Selection* get_selection();
@@ -58,6 +56,26 @@ void draw_card(int y, int x, const Card* card) {
 
 void draw_game(GameState* game) {
     clear();
+
+    // 必要な画面サイズ
+    const int required_rows = 30; // 行数
+    const int required_cols = 80; // 列数
+
+    // 現在の画面サイズを取得
+    int rows, cols;
+    getmaxyx(stdscr, rows, cols);
+
+    // 画面サイズが不足している場合のエラーメッセージ
+    if (rows < required_rows || cols < required_cols) {
+        clear();
+        mvprintw(0, 0, "画面サイズが小さすぎます。");
+        mvprintw(1, 0, "必要なサイズ: %d行 x %d列", required_rows, required_cols);
+        mvprintw(2, 0, "現在のサイズ: %d行 x %d列", rows, cols);
+        mvprintw(4, 0, "ゲーム画面のサイズを変更してください。");
+        refresh();
+        return;
+    }
+
     int cursor = get_cursor_col();
     Selection* sel = get_selection();
 
@@ -169,9 +187,9 @@ void draw_win_message() {
 int wait_for_restart() {
     int ch;
     while ((ch = getch())) {
-        if (ch == 'r') return 1;
-        if (ch == 'q') return 0;
+        if (ch == 'r') return 1; // 'r'キーが押されたら再スタートを意味する1を返す
+        if (ch == 'q') return 0; // 'q'キーが押されたら終了を意味する0を返す
     }
-    return 0;
+    return 0; // ループを抜けることは通常ないが、デフォルトで0を返す
 }
 
