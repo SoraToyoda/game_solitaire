@@ -209,6 +209,7 @@ int draw_menu() {
     mvprintw(10, 35, "1. START");
     mvprintw(12, 35, "2. HELP");
     mvprintw(14, 35, "3. EXIT");
+    mvprintw(20, 30, "数字をを入力してください");
     refresh();
 
     int choice;
