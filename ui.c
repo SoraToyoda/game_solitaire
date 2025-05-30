@@ -201,3 +201,21 @@ int wait_for_restart() {
     return 0;
 }
 
+// メニュー画面を描画し、選択肢を返す
+int draw_menu() {
+    clear();
+    const char* title = "ソリティア";
+    mvprintw(5, 30, "%s", title);
+    mvprintw(10, 35, "1. START");
+    mvprintw(12, 35, "2. HELP");
+    mvprintw(14, 35, "3. EXIT");
+    refresh();
+
+    int choice;
+    while (1) {
+        choice = getch();
+        if (choice == '1') return 1;
+        if (choice == '2') return 2;
+        if (choice == '3' || choice == 'q') return 0;
+    }
+}

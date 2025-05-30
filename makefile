@@ -3,7 +3,7 @@ CFLAGS = -Wall -lncursesw
 TARGET = solitaire
 
 SRCDIR = .
-SRCS = $(SRCDIR)/main.c $(SRCDIR)/ui.c $(SRCDIR)/deck.c $(SRCDIR)/game.c $(SRCDIR)/input.c
+SRCS = $(SRCDIR)/main.c $(SRCDIR)/ui.c $(SRCDIR)/deck.c $(SRCDIR)/game.c $(SRCDIR)/input.c $(SRCDIR)/help.c
 OBJS = $(SRCS:.c=.o)
 
 .PHONY: all clean
