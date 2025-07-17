@@ -177,19 +177,35 @@ void draw_game(GameState* game) {
 
 
 void draw_win_message() {
-    // 画面中央に大きく表示
+    // 画面をクリアして中央に大きく表示
+    clear();
     int row, col;
     getmaxyx(stdscr, row, col);
     const char* msg1 = "おめでとうございます！";
     const char* msg2 = "プレイしていただきありがとうございます";
-    // 2行分の高さを使い、幅も中央に
+    const char* msg3 = "Qキーを押すとメニューに戻ります";
+
+    int box_width = 40;
+    int box_height = 7;
+    int start_y = row/2 - box_height/2;
+    int start_x = col/2 - box_width/2;
+
+    // 枠を描画
     attron(A_BOLD | A_REVERSE);
-    mvprintw(row/2 - 2, (col - 36) / 2, " 　　　　　　　　　　　　　　　");
-    mvprintw(row/2 - 1, (col - 36) / 2, "　　%s　　", msg1);
-    mvprintw(row/2,     (col - 36) / 2, "　%s　", msg2);
-    mvprintw(row/2 + 1, (col - 36) / 2, " 　　　　　　　　　　　　　　　");
-    attroff(A_BOLD | A_REVERSE);
+    for (int i = 0; i < box_height; ++i) {
+        mvhline(start_y + i, start_x, ' ', box_width);
+    }
+    attroff(A_REVERSE);
+
+    // メッセージを中央に表示
+    attron(A_BOLD);
+    mvprintw(start_y + 1, start_x + (box_width - strlen(msg1))/2, "%s", msg1);
+    mvprintw(start_y + 3, start_x + (box_width - strlen(msg2))/2, "%s", msg2);
+    mvprintw(start_y + 5, start_x + (box_width - strlen(msg3))/2, "%s", msg3);
+    attroff(A_BOLD);
+
     refresh();
+    getch(); // キー入力待ち
 }
 
 int wait_for_restart() {
